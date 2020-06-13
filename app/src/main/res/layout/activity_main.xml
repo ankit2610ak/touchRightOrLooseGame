@@ -25,7 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:text="Your Score"
+        android:text="Your Score : 0"
         android:textColor="@android:color/holo_red_light"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -36,6 +36,7 @@
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:layout_marginTop="12dp"
+        android:src="@drawable/payment_bg2"
         app:layout_constraintTop_toBottomOf="@+id/score"
         tools:layout_editor_absoluteX="-46dp" />
 
@@ -99,7 +100,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="420dp" />
+        app:layout_constraintGuide_begin="450dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
