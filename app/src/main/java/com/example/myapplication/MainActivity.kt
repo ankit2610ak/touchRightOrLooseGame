@@ -5,27 +5,26 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import com.example.myapplication.databinding.ActivityMainBinding
 import java.util.concurrent.ThreadLocalRandom
 
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 class MainActivity : AppCompatActivity() {
-    var score: TextView? = null
-    var orangeBox: TextView? = null
-    var blueBox: TextView? = null
-    var redBox: TextView? = null
-    var greenBox: TextView? = null
-    var selectedNum = -1
-    var randomNum = -1
-    var resultVal = 0
+
+    private var selectedNum = -1
+    private var randomNum = -1
+    private var resultVal = 0
     private var mCountDownTimer: CountDownTimer? = null
     private val mTimeLeftInMillis = START_TIME_IN_MILLIS
+
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        findviews()
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         startTimer()
         clickListener()
     }
@@ -34,7 +33,7 @@ class MainActivity : AppCompatActivity() {
     private fun checkResult() {
         if (randomNum == selectedNum) {
             resultVal++
-            score!!.text = " $resultVal"
+            binding.score.text = " $resultVal"
         }
         selectedNum = -1
         resetTimer()
@@ -57,56 +56,53 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val originalState: Unit
-        private get() {
-            orangeBox!!.setBackgroundColor(Color.YELLOW)
-            blueBox!!.setBackgroundColor(Color.BLUE)
-            redBox!!.setBackgroundColor(Color.RED)
-            greenBox!!.setBackgroundColor(Color.GREEN)
+        get() {
+            binding.orangeBox.setBackgroundColor(Color.YELLOW)
+            binding.blueBox.setBackgroundColor(Color.BLUE)
+            binding.redBox.setBackgroundColor(Color.RED)
+            binding.greenBox.setBackgroundColor(Color.GREEN)
         }
 
     private fun setColor() {
-        if (randomNum == 0) {
-            orangeBox!!.setBackgroundColor(Color.parseColor("#dbdbdb"))
-        } else if (randomNum == 1) {
-            blueBox!!.setBackgroundColor(Color.parseColor("#dbdbdb"))
-        } else if (randomNum == 2) {
-            redBox!!.setBackgroundColor(Color.parseColor("#dbdbdb"))
-        } else {
-            greenBox!!.setBackgroundColor(Color.parseColor("#dbdbdb"))
+        when (randomNum) {
+            0 -> {
+                binding.orangeBox.setBackgroundColor(Color.parseColor("#dbdbdb"))
+            }
+            1 -> {
+                binding.blueBox.setBackgroundColor(Color.parseColor("#dbdbdb"))
+            }
+            2 -> {
+                binding.redBox.setBackgroundColor(Color.parseColor("#dbdbdb"))
+            }
+            else -> {
+                binding.greenBox.setBackgroundColor(Color.parseColor("#dbdbdb"))
+            }
         }
     }
 
     private val randomNumber: Unit
-        private get() {
+        get() {
             randomNum = ThreadLocalRandom.current().nextInt(0, 4)
             setColor()
         }
 
     private fun clickListener() {
-        orangeBox!!.setOnClickListener {
+        binding.orangeBox.setOnClickListener {
             selectedNum = 0
             checkResult()
         }
-        blueBox!!.setOnClickListener {
+        binding.blueBox.setOnClickListener {
             selectedNum = 1
             checkResult()
         }
-        redBox!!.setOnClickListener {
+        binding.redBox.setOnClickListener {
             selectedNum = 2
             checkResult()
         }
-        greenBox!!.setOnClickListener {
+        binding.greenBox.setOnClickListener {
             selectedNum = 3
             checkResult()
         }
-    }
-
-    private fun findviews() {
-        score = findViewById(R.id.score)
-        orangeBox = findViewById(R.id.orangeBox)
-        blueBox = findViewById(R.id.blueBox)
-        redBox = findViewById(R.id.redBox)
-        greenBox = findViewById(R.id.greenBox)
     }
 
     companion object {
