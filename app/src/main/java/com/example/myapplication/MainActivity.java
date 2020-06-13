@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.view.View;
 import android.widget.TextView;
 
@@ -16,15 +17,16 @@ import java.util.concurrent.ThreadLocalRandom;
 public class MainActivity extends AppCompatActivity {
     TextView score, orangeBox, blueBox, redBox, greenBox;
     int selectedNum = -1, randomNum = -1, result = 0;
-
+    private static final long START_TIME_IN_MILLIS = Integer.MAX_VALUE;
+    private CountDownTimer mCountDownTimer;
+    private long mTimeLeftInMillis = START_TIME_IN_MILLIS;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         findviews();
-        getRandomNumber();
+        startTimer();
         clickListener();
 
     }
@@ -34,13 +36,31 @@ public class MainActivity extends AppCompatActivity {
         if (randomNum == selectedNum) {
             result++;
             score.setText(" " + result);
-            goBackToNormalState();
-            getRandomNumber();
         }
+        selectedNum = -1;
+        resetTimer();
 
     }
 
-    private void goBackToNormalState() {
+    private void startTimer() {
+        mCountDownTimer = new CountDownTimer(mTimeLeftInMillis, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                getOriginalState();
+                getRandomNumber();
+            }
+            @Override
+            public void onFinish() {
+            }
+        }.start();
+    }
+
+    private void resetTimer() {
+        mCountDownTimer.cancel();
+        startTimer();
+    }
+
+    private void getOriginalState() {
         orangeBox.setBackgroundColor(Color.YELLOW);
         blueBox.setBackgroundColor(Color.BLUE);
         redBox.setBackgroundColor(Color.RED);
