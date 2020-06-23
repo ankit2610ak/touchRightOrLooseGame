@@ -11,8 +11,6 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.databinding.ActivityMainBinding
 import java.util.*
-import java.util.concurrent.ThreadLocalRandom
-import java.util.concurrent.ThreadLocalRandom.current
 
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 class MainActivity : AppCompatActivity() {
@@ -30,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        randomNumber
+        randomNumberAndResetColor
         clickListener()
     }
 
@@ -73,7 +71,7 @@ class MainActivity : AppCompatActivity() {
         mCountDownTimer = object : CountDownTimer(mTimeLeftInMillis, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 originalState
-                randomNumber
+                randomNumberAndResetColor
                 Log.d(TAG, "tick$resultVal")
             }
 
@@ -116,12 +114,23 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private val randomNumber: Unit
+    private val randomNumberAndResetColor: Unit
         get() {
-            randomNum = Random().nextInt(4)
-            Log.d(TAG, "Random Num: $randomNum")
+            getRandomNumber()
             setColor()
         }
+
+    private fun getRandomNumber() {
+
+        val randomNumTenp = Random().nextInt(4)
+        if (randomNumTenp == randomNum) {
+            getRandomNumber()
+        } else {
+            randomNum = randomNumTenp
+            Log.d(TAG, "Random Num: $randomNum")
+
+        }
+    }
 
     private fun clickListener() {
         binding.orangeBox.setOnClickListener {
