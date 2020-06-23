@@ -1,14 +1,18 @@
 package com.example.myapplication
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.databinding.ActivityMainBinding
+import java.util.*
 import java.util.concurrent.ThreadLocalRandom
+import java.util.concurrent.ThreadLocalRandom.current
 
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 class MainActivity : AppCompatActivity() {
@@ -18,25 +22,51 @@ class MainActivity : AppCompatActivity() {
     private var resultVal = 0
     private var mCountDownTimer: CountDownTimer? = null
     private val mTimeLeftInMillis = START_TIME_IN_MILLIS
-
+    private val TAG: String = "MainActivity"
     private lateinit var binding: ActivityMainBinding
+    private var hasStarted = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        startTimer()
+        randomNumber
         clickListener()
     }
 
     @SuppressLint("SetTextI18n")
     private fun checkResult() {
+        if(!hasStarted){
+            startTimer()
+            hasStarted = true
+        }
         if (randomNum == selectedNum) {
             resultVal++
             binding.score.text = " $resultVal"
+
+        } else {
+            Log.d(TAG, "wrong touch")
+            openResultPage()
         }
         selectedNum = -1
         resetTimer()
+
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        hasStarted = false
+        mCountDownTimer?.cancel()
+        Log.d(TAG, "on Destroy called")
+    }
+
+    private fun openResultPage() {
+        val intent = Intent(this, ResultActivity::class.java)
+        intent.putExtra("result", resultVal)
+        finish()
+        startActivity(intent)
+
     }
 
     private fun startTimer() {
@@ -44,13 +74,19 @@ class MainActivity : AppCompatActivity() {
             override fun onTick(millisUntilFinished: Long) {
                 originalState
                 randomNumber
+                Log.d(TAG, "tick$resultVal")
             }
 
-            override fun onFinish() {}
+            override fun onFinish() {
+                Log.d(TAG, "timer finish")
+                openResultPage()
+
+            }
         }.start()
     }
 
     private fun resetTimer() {
+        Log.d(TAG, "reset timer")
         mCountDownTimer!!.cancel()
         startTimer()
     }
@@ -82,7 +118,8 @@ class MainActivity : AppCompatActivity() {
 
     private val randomNumber: Unit
         get() {
-            randomNum = ThreadLocalRandom.current().nextInt(0, 4)
+            randomNum = Random().nextInt(4)
+            Log.d(TAG, "Random Num: $randomNum")
             setColor()
         }
 
@@ -106,6 +143,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
-        private const val START_TIME_IN_MILLIS = Int.MAX_VALUE.toLong()
+        private const val START_TIME_IN_MILLIS = 1000.toLong()
     }
 }
